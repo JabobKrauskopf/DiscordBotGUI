@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "composite": false,
+    "rootDir": ".",
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "downlevelIteration": true,
+    "strict": true
+  },
+  "include": ["next-env.d.ts", "src"],
+  "exclude": [".next"]
+}
