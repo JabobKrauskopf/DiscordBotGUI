@@ -12,18 +12,26 @@ export interface ChannelInterface {
 
 export const Settings = (): JSX.Element => {
   const [channels, setChannels] = useState<ChannelInterface[]>([]);
+  const [botName, setBotName] = useState('');
 
   useEffect(() => {
     (async () => {
       const searchResult = await fetch(
         'http://127.0.0.1:5000/get_all_channels',
       ).then(respone => respone.json());
-      console.log(searchResult);
       setChannels(
         searchResult.filter(
           (channel: ChannelInterface) => channel.type == 'VoiceChannel',
         ),
       );
+    })();
+  }, []);
+  useEffect(() => {
+    (async () => {
+      const searchResult = await fetch(
+        'http://127.0.0.1:5000/get_bot_status',
+      ).then(respone => respone.json());
+      setBotName(searchResult.name);
     })();
   }, []);
   return (
@@ -39,7 +47,13 @@ export const Settings = (): JSX.Element => {
           </Text>
           <Flex paddingTop="2rem" alignItems="center" paddingBottom="1rem">
             <Text fontSize="l" paddingRight="10px">
-              Discord Guild Token:
+              Bot Name:
+            </Text>
+            <Input width="15%" size="sm" placeholder={botName} />
+          </Flex>
+          <Flex alignItems="center" paddingBottom="1rem">
+            <Text fontSize="l" paddingRight="10px">
+              Discord Token:
             </Text>
             <Input width="30%" size="sm" placeholder="Token" />
           </Flex>

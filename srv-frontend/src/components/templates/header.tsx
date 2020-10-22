@@ -5,9 +5,11 @@ import {
   Heading,
   useColorMode,
   Switch,
+  background,
 } from '@chakra-ui/core';
 import { customColors } from './base-template';
 import React from 'react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 interface HeaderProps {
   heading: string;
@@ -23,6 +25,10 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
   const headingColor = useColorModeValue(
     customColors.heading.color.light,
     customColors.heading.color.dark,
+  );
+  const iconColor = useColorModeValue(
+    customColors.icons.color.light,
+    customColors.icons.color.dark,
   );
 
   return (
@@ -48,13 +54,27 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
 
         <Flex alignItems="center" width="100%">
           <Box position="fixed" right="1rem" zIndex={10}>
-            <Switch
-              isChecked={isDark}
-              onChange={toggleColorMode}
-              paddingRight="3rem"
-              paddingLeft="2rem"
-              colorScheme="#fff"
-            />
+            {isDark ? (
+              <SunIcon
+                onClick={toggleColorMode}
+                boxSize="30px"
+                color={iconColor}
+                borderRadius="0.5em"
+                padding="5px"
+                cursor="pointer"
+                _hover={{ backgroundColor: '#4d4d4d' }}
+              />
+            ) : (
+              <MoonIcon
+                onClick={toggleColorMode}
+                boxSize="30px"
+                color={iconColor}
+                borderRadius="0.5em"
+                padding="5px"
+                cursor="pointer"
+                _hover={{ backgroundColor: '#c7c3c3' }}
+              />
+            )}
           </Box>
         </Flex>
       </Flex>

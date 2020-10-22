@@ -30,3 +30,9 @@ def get_all_channels():
             }
         )
     return jsonify(response)
+
+
+@app.route("/get_bot_status")
+def get_bot_status():
+    bot_status = bot.get_bot_status()
+    return jsonify({"name": bot_status.name, "id": bot_status.id})

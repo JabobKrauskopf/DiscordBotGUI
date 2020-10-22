@@ -21,13 +21,20 @@ class Threader(Thread):
         await self.discord_client.start(TOKEN)
 
     def run(self):
+        self.name = 'Discord.py'
+
         self.loop.create_task(self.starter())
         self.loop.run_forever()
 
 
 @client.event
 async def on_ready():
-    print(f"{client.user} has connected to Discord!")
+    print(f"{client.user.name} has connected to Discord!")
+    await client.change_presence(activity=discord.Game(name="Visit localhost:3000"))
+
+
+def get_bot_status():
+    return client.user
 
 
 @client.event
