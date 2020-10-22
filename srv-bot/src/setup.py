@@ -18,6 +18,7 @@ setuptools_kwargs = {
         "MarkupSafe==1.1.1",
         "mccabe==0.6.1",
         "multidict==4.7.6",
+        "psycopg2==2.8.6",
         "pycodestyle==2.6.0",
         "pyflakes==2.2.0",
         "typing-extensions==3.7.4.3",

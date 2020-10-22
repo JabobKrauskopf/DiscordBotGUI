@@ -27,6 +27,15 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
   );
   const [isConnected, setIsConnected] = useState(false);
 
+  const onConnectClick = () => {
+    setIsConnected(!isConnected);
+    fetch(
+      isConnected
+        ? 'http://127.0.0.1:5000/disconnect'
+        : 'http://127.0.0.1:5000/connect',
+    );
+  };
+
   return (
     <>
       <Flex
@@ -62,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
                   : customColors.successColor.lighter,
               }}
               color="#fff"
-              onClick={() => setIsConnected(!isConnected)}
+              onClick={onConnectClick}
             >
               {isConnected ? 'Disconnect' : 'Connect'}
             </Button>
@@ -71,6 +80,7 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
               onChange={toggleColorMode}
               paddingRight="3rem"
               paddingLeft="2rem"
+              colorScheme="#fff"
             />
           </Box>
         </Flex>
