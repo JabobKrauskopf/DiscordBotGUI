@@ -8,7 +8,7 @@ import {
   Button,
 } from '@chakra-ui/core';
 import { customColors } from './base-template';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface HeaderProps {
   heading: string;
@@ -25,16 +25,18 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
     customColors.heading.color.light,
     customColors.heading.color.dark,
   );
-  const [isConnected, setIsConnected] = useState(false);
+  // const [isConnected, setIsConnected] = useState(false);
 
-  const onConnectClick = () => {
-    setIsConnected(!isConnected);
-    fetch(
-      isConnected
-        ? 'http://127.0.0.1:5000/disconnect'
-        : 'http://127.0.0.1:5000/connect',
-    );
-  };
+  // useEffect(() => {
+  //   (async () => {
+  //     const searchResult = await fetch(
+  //       isConnected
+  //         ? 'http://127.0.0.1:5000/connect'
+  //         : 'http://127.0.0.1:5000/disconnect',
+  //     ).then(respone => respone.json());
+  //     console.log(searchResult);
+  //   })();
+  // }, [isConnected]);
 
   return (
     <>
@@ -59,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
 
         <Flex alignItems="center" width="100%">
           <Box position="fixed" right="1rem" zIndex={10}>
-            <Button
+            {/* <Button
               backgroundColor={
                 isConnected
                   ? customColors.dangerColor.standard
@@ -71,10 +73,10 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
                   : customColors.successColor.lighter,
               }}
               color="#fff"
-              onClick={onConnectClick}
+              onClick={() => setIsConnected(!isConnected)}
             >
               {isConnected ? 'Disconnect' : 'Connect'}
-            </Button>
+            </Button> */}
             <Switch
               isChecked={isDark}
               onChange={toggleColorMode}
