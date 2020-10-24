@@ -21,7 +21,7 @@ class Threader(Thread):
         await self.discord_client.start(TOKEN)
 
     def run(self):
-        self.name = 'Discord.py'
+        self.name = "Discord.py"
 
         self.loop.create_task(self.starter())
         self.loop.run_forever()
@@ -35,11 +35,6 @@ async def on_ready():
 
 def get_bot_status():
     return client.user
-
-
-@client.event
-async def on_message_edit(before, after):
-    await after.channel.send("I can see that {0}! ".format(after.author.name))
 
 
 def get_all_channels():

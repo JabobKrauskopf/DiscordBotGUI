@@ -61,7 +61,7 @@ export const Settings = (): JSX.Element => {
             <Text fontSize="l" paddingRight="10px">
               Main Channel:
             </Text>
-            <Select width="20%" size="sm" placeholder="Select Main Channel">
+            <Select width="20%" size="sm">
               {channels.map(channel => (
                 <option value={channel.id} key={channel.id}>
                   {channel.name}

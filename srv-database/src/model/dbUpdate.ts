@@ -18,7 +18,12 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT) || 5432,
 });
 
-const FILES = [['__init.sql'], ['app_public', '__init.sql']];
+const FILES = [
+  ['__init.sql'],
+  ['app_public', '__init.sql'],
+  ['app_public', 'bot.sql'],
+  ['app_public', 'logging.sql'],
+];
 
 export const closeAllOtherConnections = async (
   client: Client,

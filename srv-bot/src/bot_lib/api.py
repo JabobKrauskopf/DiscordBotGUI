@@ -1,9 +1,29 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 import bot_lib.bot as bot
+import psycopg2
+import os
 
 app = Flask(__name__)
 CORS(app)
+
+load_dotenv()
+TOKEN = os.getenv("POSTGRES_USER")
+
+connection = psycopg2.connect(
+    user=os.getenv("POSTGRES_USER"),
+    password=os.getenv("POSTGRES_PASSWORD"),
+    host=os.getenv("POSTGRES_HOST"),
+    port=os.getenv("POSTGRES_PORT"),
+    database=os.getenv("POSTGRES_DATABASE"),
+)
+
+cursor = connection.cursor()
+
+cursor.execute("SELECT version();")
+record = cursor.fetchone()
+print("You are connected to - " + str(record) + "\n")
 
 
 @app.route("/connect_to_voice")
