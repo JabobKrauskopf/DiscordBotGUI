@@ -20,9 +20,15 @@ connection = psycopg2.connect(
 
 cursor = connection.cursor()
 
-cursor.execute("SELECT token FROM app_public.bot WHERE id=1;")
+cursor.execute(
+    "SELECT token, main_text_channel, main_voice_channel FROM app_public.bot WHERE id=1;"
+)
 record = cursor.fetchone()
 
+if record[2]:
+    bot.mainVoiceChannel = record[2]
+if record[1]:
+    bot.mainTextChannel = record[1]
 botThread = None
 
 if record[0]:
@@ -71,9 +77,6 @@ def get_bot_status():
 @app.route("/set_bot_status", methods=["GET", "POST"])
 def set_bot_status():
     req_data = request.json
-    botName = None
-    token = None
-    mainChannel = None
     try:
         botName = req_data["botName"]
         bot.rename(botName)
@@ -90,12 +93,23 @@ def set_bot_status():
     except KeyError:
         pass
     try:
-        mainChannel = req_data["mainChannel"]
+        mainVoiceChannel = req_data["mainVoiceChannel"]
         cursor.execute(
-            "UPDATE app_public.bot SET main_channel='{0}' WHERE id=1;".format(
-                int(mainChannel)
+            "UPDATE app_public.bot SET main_voice_channel='{0}' WHERE id=1;".format(
+                int(mainVoiceChannel)
             )
         )
+        bot.mainVoiceChannel = mainVoiceChannel
+    except KeyError:
+        pass
+    try:
+        mainTextChannel = req_data["mainTextChannel"]
+        cursor.execute(
+            "UPDATE app_public.bot SET main_text_channel='{0}' WHERE id=1;".format(
+                int(mainTextChannel)
+            )
+        )
+        bot.mainTextChannel = mainTextChannel
     except KeyError:
         pass
     connection.commit()

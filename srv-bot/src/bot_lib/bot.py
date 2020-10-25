@@ -26,6 +26,9 @@ record = cursor.fetchone()
 
 botLoop = None
 
+mainVoiceChannel = None
+mainTextChannel = None
+
 
 class Threader(Thread):
     def __init__(self, token):
@@ -53,14 +56,11 @@ class Threader(Thread):
 @client.event
 async def on_ready():
     print(f"{client.user.name} has connected to Discord!")
+    if mainTextChannel:
+        channel = client.get_channel(int(mainTextChannel))
+        if channel:
+            await channel.send("Isch bin jetz uch do")
     await client.change_presence(activity=discord.Game(name="Visit localhost:3000"))
-
-
-@client.event
-async def on_message(message):
-    if message.content.lower() == "mach mal":
-        channel = message.channel
-        await channel.send('Test!')
 
 
 def get_bot_status():

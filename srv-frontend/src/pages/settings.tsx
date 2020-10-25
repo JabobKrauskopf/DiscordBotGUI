@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import {
   Stack,
@@ -12,72 +12,23 @@ import {
 } from '@chakra-ui/core';
 import { BaseWrapper } from '../components/templates/base-wrapper';
 import { customColors } from '../components/templates/base-template';
-import { useForm, OnSubmit } from 'react-hook-form';
-
-export interface ChannelInterface {
-  name: string;
-  id: string;
-  type: string;
-}
+import { useGetChannels, ChannelInterface } from '../hooks/use-get-channels';
+import { useGetBotStatus } from '../hooks/use-get-bot-status';
+import { useOnFormSubmit } from '../hooks/use-on-form-submit';
+import { useForm } from 'react-hook-form';
 
 export interface BotStatusInterface {
   botNameForm: string;
   tokenForm: string;
-  mainChannelForm: number;
+  mainVoiceChannelForm: number;
+  mainTextChannelForm: number;
 }
 
 export const Settings = (): JSX.Element => {
-  const [channels, setChannels] = useState<ChannelInterface[]>([]);
-  const [botStatus, setBotStatus] = useState('offline');
-  const [botName, setBotName] = useState('');
-  const [token, setToken] = useState('');
+  const [channels] = useGetChannels();
+  const [botStatus, botName, token, setBotName, setToken] = useGetBotStatus();
   const { handleSubmit, errors, formState, register } = useForm();
-
-  useEffect(() => {
-    (async () => {
-      const searchResult = await fetch(
-        'http://127.0.0.1:5000/get_all_channels',
-      ).then(respone => respone.json());
-      setChannels(
-        searchResult.filter(
-          (channel: ChannelInterface) => channel.type == 'VoiceChannel',
-        ),
-      );
-    })();
-  }, []);
-  useEffect(() => {
-    (async () => {
-      const searchResult = await fetch(
-        'http://127.0.0.1:5000/get_bot_status',
-      ).then(respone => respone.json());
-      setBotStatus(searchResult.status);
-      setBotName(searchResult.name);
-      setToken(searchResult.token);
-    })();
-  }, []);
-
-  const onSubmit: OnSubmit<BotStatusInterface> = async ({
-    botNameForm,
-    tokenForm,
-    mainChannelForm,
-  }) => {
-    const query = `{${
-      botNameForm
-        ? `"botName":"${botNameForm}"${tokenForm || mainChannelForm ? ',' : ''}`
-        : ''
-    }${tokenForm ? `"token":"${tokenForm}"${mainChannelForm ? ',' : ''}` : ''}${
-      mainChannelForm ? `"mainChannel": "${mainChannelForm}"` : ''
-    }}`;
-    console.log(query);
-    await fetch('http://127.0.0.1:5000/set_bot_status', {
-      method: 'POST',
-      mode: 'cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: query,
-    }).then(respone => respone.json());
-    setBotName(botNameForm ? botNameForm : botName);
-    setToken(tokenForm ? tokenForm : token);
-  };
+  const [onSubmit] = useOnFormSubmit({ setBotName, setToken });
   return (
     <>
       <Head>
@@ -127,21 +78,48 @@ export const Settings = (): JSX.Element => {
                   ref={register}
                 />
               </Flex>
-              <Flex alignItems="center" paddingBottom="2rem">
+              <Flex alignItems="center" paddingBottom="1rem">
                 <Text fontSize="l" paddingRight="10px">
-                  Main Channel:
+                  Main Voice Channel:
                 </Text>
                 <Select
                   width="20%"
                   size="sm"
-                  name="mainChannelForm"
+                  name="mainVoiceChannelForm"
                   ref={register}
                 >
-                  {channels.map(channel => (
-                    <option value={channel.id} key={channel.id}>
-                      {channel.name}
-                    </option>
-                  ))}
+                  {channels
+                    .filter(
+                      (channel: ChannelInterface) =>
+                        channel.type == 'VoiceChannel',
+                    )
+                    .map(channel => (
+                      <option value={channel.id} key={channel.id}>
+                        {channel.name}
+                      </option>
+                    ))}
+                </Select>
+              </Flex>
+              <Flex alignItems="center" paddingBottom="2rem">
+                <Text fontSize="l" paddingRight="10px">
+                  Main Text Channel:
+                </Text>
+                <Select
+                  width="20%"
+                  size="sm"
+                  name="mainTextChannelForm"
+                  ref={register}
+                >
+                  {channels
+                    .filter(
+                      (channel: ChannelInterface) =>
+                        channel.type == 'TextChannel',
+                    )
+                    .map(channel => (
+                      <option value={channel.id} key={channel.id}>
+                        {channel.name}
+                      </option>
+                    ))}
                 </Select>
               </Flex>
               <FormErrorMessage>
