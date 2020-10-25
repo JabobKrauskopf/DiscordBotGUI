@@ -42,4 +42,8 @@ def get_all_channels():
     return channels
 
 
+async def rename(name):
+    await client.user.edit(username=name)
+
+
 Threader()

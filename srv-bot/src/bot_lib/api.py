@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 import bot_lib.bot as bot
@@ -9,7 +9,6 @@ app = Flask(__name__)
 CORS(app)
 
 load_dotenv()
-TOKEN = os.getenv("POSTGRES_USER")
 
 connection = psycopg2.connect(
     user=os.getenv("POSTGRES_USER"),
@@ -20,10 +19,6 @@ connection = psycopg2.connect(
 )
 
 cursor = connection.cursor()
-
-cursor.execute("SELECT version();")
-record = cursor.fetchone()
-print("You are connected to - " + str(record) + "\n")
 
 
 @app.route("/connect_to_voice")
@@ -55,4 +50,41 @@ def get_all_channels():
 @app.route("/get_bot_status")
 def get_bot_status():
     bot_status = bot.get_bot_status()
-    return jsonify({"name": bot_status.name, "id": bot_status.id})
+    cursor.execute("SELECT token FROM app_public.bot WHERE id=1;")
+    record = cursor.fetchone()
+    print(record)
+    return jsonify({"name": bot_status.name, "id": bot_status.id, "token": record[0]})
+
+
+@app.route("/set_bot_status", methods=["GET", "POST"])
+def set_bot_status():
+    req_data = request.json
+    botName = None
+    token = None
+    mainChannel = None
+    print(req_data)
+    try:
+        botName = req_data["botName"]
+        cursor.execute(
+            "UPDATE app_public.bot SET name='{0}' WHERE id=1;".format(botName)
+        )
+    except KeyError:
+        pass
+    try:
+        token = req_data["token"]
+        cursor.execute(
+            "UPDATE app_public.bot SET token='{0}' WHERE id=1;".format(token)
+        )
+    except KeyError:
+        pass
+    try:
+        mainChannel = req_data["mainChannel"]
+        cursor.execute(
+            "UPDATE app_public.bot SET main_channel='{0}' WHERE id=1;".format(
+                int(mainChannel)
+            )
+        )
+    except KeyError:
+        pass
+    connection.commit()
+    return jsonify({"error": False, "status": "Changed name"})
