@@ -21,13 +21,14 @@ export interface ChannelInterface {
 }
 
 export interface BotStatusInterface {
-  botName: string;
-  token: string;
-  mainChannel: number;
+  botNameForm: string;
+  tokenForm: string;
+  mainChannelForm: number;
 }
 
 export const Settings = (): JSX.Element => {
   const [channels, setChannels] = useState<ChannelInterface[]>([]);
+  const [botStatus, setBotStatus] = useState('offline');
   const [botName, setBotName] = useState('');
   const [token, setToken] = useState('');
   const { handleSubmit, errors, formState, register } = useForm();
@@ -49,30 +50,33 @@ export const Settings = (): JSX.Element => {
       const searchResult = await fetch(
         'http://127.0.0.1:5000/get_bot_status',
       ).then(respone => respone.json());
+      setBotStatus(searchResult.status);
       setBotName(searchResult.name);
       setToken(searchResult.token);
     })();
   }, []);
 
   const onSubmit: OnSubmit<BotStatusInterface> = async ({
-    botName,
-    token,
-    mainChannel,
+    botNameForm,
+    tokenForm,
+    mainChannelForm,
   }) => {
-    console.log(mainChannel);
     const query = `{${
-      botName ? `"botName":"${botName}"${token || mainChannel ? ',' : ''}` : ''
-    }${token ? `"token":"${token}"${mainChannel ? ',' : ''}` : ''}${
-      mainChannel ? `"mainChannel": "${mainChannel}"` : ''
+      botNameForm
+        ? `"botName":"${botNameForm}"${tokenForm || mainChannelForm ? ',' : ''}`
+        : ''
+    }${tokenForm ? `"token":"${tokenForm}"${mainChannelForm ? ',' : ''}` : ''}${
+      mainChannelForm ? `"mainChannel": "${mainChannelForm}"` : ''
     }}`;
     console.log(query);
-    const searchResult = await fetch('http://127.0.0.1:5000/set_bot_status', {
+    await fetch('http://127.0.0.1:5000/set_bot_status', {
       method: 'POST',
       mode: 'cors',
       headers: { 'Content-Type': 'application/json' },
       body: query,
     }).then(respone => respone.json());
-    console.log(searchResult);
+    setBotName(botNameForm ? botNameForm : botName);
+    setToken(tokenForm ? tokenForm : token);
   };
   return (
     <>
@@ -85,6 +89,14 @@ export const Settings = (): JSX.Element => {
           <Text as="strong" fontSize="3xl">
             Change the Settings of your Discord Bot
           </Text>
+          <Flex>
+            <Text fontSize="l" paddingRight="5px">
+              Current Status:
+            </Text>
+            <Text as="strong" fontSize="l">
+              {botStatus}
+            </Text>
+          </Flex>
           <form
             onSubmit={handleSubmit(data =>
               onSubmit(data as BotStatusInterface),
@@ -99,7 +111,7 @@ export const Settings = (): JSX.Element => {
                   width="15%"
                   size="sm"
                   placeholder={botName}
-                  name="botName"
+                  name="botNameForm"
                   ref={register}
                 />
               </Flex>
@@ -111,7 +123,7 @@ export const Settings = (): JSX.Element => {
                   width="45%"
                   size="sm"
                   placeholder={token}
-                  name="token"
+                  name="tokenForm"
                   ref={register}
                 />
               </Flex>
@@ -119,7 +131,12 @@ export const Settings = (): JSX.Element => {
                 <Text fontSize="l" paddingRight="10px">
                   Main Channel:
                 </Text>
-                <Select width="20%" size="sm" name="mainChannel" ref={register}>
+                <Select
+                  width="20%"
+                  size="sm"
+                  name="mainChannelForm"
+                  ref={register}
+                >
                   {channels.map(channel => (
                     <option value={channel.id} key={channel.id}>
                       {channel.name}

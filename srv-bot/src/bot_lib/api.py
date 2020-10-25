@@ -20,6 +20,14 @@ connection = psycopg2.connect(
 
 cursor = connection.cursor()
 
+cursor.execute("SELECT token FROM app_public.bot WHERE id=1;")
+record = cursor.fetchone()
+
+botThread = None
+
+if record[0]:
+    botThread = bot.Threader(record[0])
+
 
 @app.route("/connect_to_voice")
 def connect():
@@ -49,11 +57,15 @@ def get_all_channels():
 
 @app.route("/get_bot_status")
 def get_bot_status():
-    bot_status = bot.get_bot_status()
-    cursor.execute("SELECT token FROM app_public.bot WHERE id=1;")
+    cursor.execute("SELECT name, token FROM app_public.bot WHERE id=1;")
     record = cursor.fetchone()
-    print(record)
-    return jsonify({"name": bot_status.name, "id": bot_status.id, "token": record[0]})
+    return jsonify(
+        {
+            "name": record[0],
+            "token": record[1],
+            "status": "online" if botThread else "offline",
+        }
+    )
 
 
 @app.route("/set_bot_status", methods=["GET", "POST"])
@@ -62,9 +74,9 @@ def set_bot_status():
     botName = None
     token = None
     mainChannel = None
-    print(req_data)
     try:
         botName = req_data["botName"]
+        bot.rename(botName)
         cursor.execute(
             "UPDATE app_public.bot SET name='{0}' WHERE id=1;".format(botName)
         )
@@ -88,3 +100,25 @@ def set_bot_status():
         pass
     connection.commit()
     return jsonify({"error": False, "status": "Changed name"})
+
+
+@app.route("/start")
+def start():
+    global botThread
+    cursor.execute("SELECT token FROM app_public.bot WHERE id=1;")
+    record = cursor.fetchone()
+
+    if record[0] and not botThread:
+        botThread = bot.Threader(record[0])
+    return jsonify({"error": False, "status": "Started"})
+
+
+@app.route("/stop")
+def stop():
+    global botThread
+
+    if botThread:
+        botThread.loop.call_soon_threadsafe(botThread.loop.stop)
+        botThread.join()
+        botThread = None
+    return jsonify({"error": False, "status": "Stopped"})
