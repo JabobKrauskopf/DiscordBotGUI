@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import { customColors } from './base-template';
-import { FaHome } from 'react-icons/fa';
+import { FaHome, FaChartBar, FaCogs } from 'react-icons/fa';
 import { LogoIcon } from '../icons';
 import React from 'react';
 
@@ -72,6 +72,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <FaHome size="25px" color={iconColor} />
                   <Text paddingLeft="10px" width="100%" fontWeight="normal">
                     Home
+                  </Text>
+                </Button>
+              </Link>
+            </NextLink>
+          </Box>
+          <Box>
+            <NextLink href="/insights" as="/insights">
+              <Link href="/insights" height="100%" width="100%">
+                <Button
+                  variant="ghost"
+                  width="100%"
+                  textAlign="left"
+                  borderRadius="0"
+                  _hover={{ backgroundColor: buttonBackgroundColor }}
+                >
+                  <FaChartBar size="25px" color={iconColor} />
+                  <Text paddingLeft="10px" width="100%" fontWeight="normal">
+                    Insights
+                  </Text>
+                </Button>
+              </Link>
+            </NextLink>
+          </Box>
+          <Box>
+            <NextLink href="/settings" as="/settings">
+              <Link href="/settings" height="100%" width="100%">
+                <Button
+                  variant="ghost"
+                  width="100%"
+                  textAlign="left"
+                  borderRadius="0"
+                  _hover={{ backgroundColor: buttonBackgroundColor }}
+                >
+                  <FaCogs size="25px" color={iconColor} />
+                  <Text paddingLeft="10px" width="100%" fontWeight="normal">
+                    Settings
                   </Text>
                 </Button>
               </Link>

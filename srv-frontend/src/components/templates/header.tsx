@@ -5,10 +5,11 @@ import {
   Heading,
   useColorMode,
   Switch,
-  Button,
+  background,
 } from '@chakra-ui/core';
 import { customColors } from './base-template';
-import React, { useState } from 'react';
+import React from 'react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 interface HeaderProps {
   heading: string;
@@ -25,7 +26,10 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
     customColors.heading.color.light,
     customColors.heading.color.dark,
   );
-  const [isConnected, setIsConnected] = useState(false);
+  const iconColor = useColorModeValue(
+    customColors.icons.color.light,
+    customColors.icons.color.dark,
+  );
 
   return (
     <>
@@ -50,28 +54,27 @@ export const Header: React.FC<HeaderProps> = ({ heading }): JSX.Element => {
 
         <Flex alignItems="center" width="100%">
           <Box position="fixed" right="1rem" zIndex={10}>
-            <Button
-              backgroundColor={
-                isConnected
-                  ? customColors.dangerColor.standard
-                  : customColors.successColor.standard
-              }
-              _hover={{
-                backgroundColor: isConnected
-                  ? customColors.dangerColor.lighter
-                  : customColors.successColor.lighter,
-              }}
-              color="#fff"
-              onClick={() => setIsConnected(!isConnected)}
-            >
-              {isConnected ? 'Disconnect' : 'Connect'}
-            </Button>
-            <Switch
-              isChecked={isDark}
-              onChange={toggleColorMode}
-              paddingRight="3rem"
-              paddingLeft="2rem"
-            />
+            {isDark ? (
+              <SunIcon
+                onClick={toggleColorMode}
+                boxSize="30px"
+                color={iconColor}
+                borderRadius="0.5em"
+                padding="5px"
+                cursor="pointer"
+                _hover={{ backgroundColor: '#4d4d4d' }}
+              />
+            ) : (
+              <MoonIcon
+                onClick={toggleColorMode}
+                boxSize="30px"
+                color={iconColor}
+                borderRadius="0.5em"
+                padding="5px"
+                cursor="pointer"
+                _hover={{ backgroundColor: '#c7c3c3' }}
+              />
+            )}
           </Box>
         </Flex>
       </Flex>
