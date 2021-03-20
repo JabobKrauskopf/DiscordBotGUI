@@ -17,7 +17,7 @@ setuptools_kwargs = {
         "idna==2.10",
         "importlib-metadata==2.0.0",
         "itsdangerous==1.1.0",
-        "Jinja2==2.11.2",
+        "Jinja2==2.11.3",
         "MarkupSafe==1.1.1",
         "mccabe==0.6.1",
         "multidict==4.7.6",
